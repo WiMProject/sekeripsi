@@ -91,7 +91,8 @@ export default function ClassifyPage() {
       reader.onload = async () => {
         const base64Data = (reader.result as string).split(",")[1];
 
-        const response = await fetch("/api/analyze-xray", {
+        const apiUrl = import.meta.env.VITE_API_URL || "";
+        const response = await fetch(`${apiUrl}/api/analyze-xray`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
