@@ -1,0 +1,6 @@
+{
+  "name": "Lung-AI",
+  "description": "AI-powered lung disease classification system for doctors and radiologists.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,32 @@
+# ── Model Weights (terlalu besar untuk Git) ──
+backend/weights/*.pth
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# ── Node.js ──
+frontend/node_modules/
+frontend/dist/
+
+# ── Environment Variables ──
+.env
+.env.local
+.env.*.local
+frontend/.env
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ──
+.DS_Store
+Thumbs.db

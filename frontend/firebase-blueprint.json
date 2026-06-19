@@ -1,0 +1,28 @@
+{
+  "entities": {
+    "Examination": {
+      "title": "Examination",
+      "description": "Record of a lung disease diagnosis analysis",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientId": { "type": "string" },
+        "patientName": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "prediction": { "type": "string", "enum": ["Normal", "Tuberculosis (TBC)", "Pneumonia"] },
+        "confidence": { "type": "number" },
+        "imageUrl": { "type": "string" },
+        "heatmapUrl": { "type": "string" },
+        "doctorUid": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["patientId", "date", "prediction", "confidence", "doctorUid"]
+    }
+  },
+  "firestore": {
+    "examinations": {
+      "schema": "Examination",
+      "description": "Collection of lung examination records"
+    }
+  }
+}
