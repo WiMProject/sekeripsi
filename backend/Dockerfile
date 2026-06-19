@@ -1,8 +1,11 @@
 FROM python:3.10-slim
 
-# Install system dependencies if any are needed
+# Install system dependencies for OpenCV and building packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libgl1 \
+    libglib2.0-0 \
+    libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up a new user named "user" with UID 1000 to comply with Hugging Face policy
