@@ -20,7 +20,7 @@ export default function Navbar() {
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <Activity className="w-4 h-4 text-white" />
           </div>
-          <span className="text-base font-black tracking-tight text-white hidden md:block">
+          <span className="text-base font-black tracking-tight text-white hidden md:block whitespace-nowrap">
             Lung<span className="gradient-text">-AI</span>
           </span>
         </Link>
