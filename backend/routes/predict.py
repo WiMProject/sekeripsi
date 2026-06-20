@@ -128,6 +128,37 @@ async def analyze_xray(payload: AnalyzeRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Gagal melakukan decode base64: {str(e)}")
 
+    # Validasi menggunakan Gemini Vision untuk memastikan gambar yang diunggah adalah rontgen dada (X-Ray)
+    if api_key:
+        try:
+            from PIL import Image
+            import io
+            
+            # Buka bytes gambar dengan PIL
+            img_pil = Image.open(io.BytesIO(file_bytes))
+            
+            model = genai.GenerativeModel("gemini-2.5-flash")
+            prompt = (
+                "Assess if this image is a medical human chest X-ray. "
+                "Respond with exactly one word: 'yes' if it is a chest X-ray, or 'no' if it is anything else "
+                "(for example, photos of people, animals, landscapes, text, charts, food, or other medical scans "
+                "like brain CT scan, ultrasound, dental X-ray, etc)."
+            )
+            response = model.generate_content([prompt, img_pil])
+            validation_result = response.text.strip().lower()
+            
+            # Jika Gemini membalas "no"
+            if "no" in validation_result:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Berkas yang Anda unggah terdeteksi bukan merupakan citra rontgen dada (X-Ray) manusia yang valid."
+                )
+        except HTTPException:
+            raise
+        except Exception as e:
+            # Jika API Gemini error/limit, abaikan validasi (fallback) agar sistem tetap bisa berfungsi dengan model lokal
+            print(f"Gemini image validation skipped due to error: {e}")
+
     # Jalankan inference
     try:
         result = run_inference(file_bytes)

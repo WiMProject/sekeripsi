@@ -108,7 +108,9 @@ export default function ClassifyPage() {
         });
 
         const data = await response.json();
-        if (data.error) throw new Error(data.error);
+        if (!response.ok) {
+          throw new Error(data.detail || data.error || "Gagal melakukan analisis citra.");
+        }
 
         setResult(data);
         setActiveStep("gradcam");
@@ -140,11 +142,11 @@ export default function ClassifyPage() {
           description: "Hasil klasifikasi telah tersimpan ke histori.",
         });
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("Analysis error:", error);
       setIsAnalyzing(false);
       toast.error("Analisis Gagal", {
-        description: "Model AI mengalami kesalahan saat inferensi. Pastikan backend berjalan.",
+        description: error.message || "Model AI mengalami kesalahan saat inferensi. Pastikan backend berjalan.",
       });
     }
   };
