@@ -86,62 +86,67 @@ export default function ClassifyPage() {
     setIsAnalyzing(true);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64Data = (reader.result as string).split(",")[1];
-
-        const apiUrl = import.meta.env.VITE_API_URL || "";
-        const response = await fetch(`${apiUrl}/api/analyze-xray`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            imageBase64: base64Data,
-            patientMetadata: {
-              name: patientName,
-              age: parseInt(age),
-              gender: gender,
-              height: parseFloat(height),
-              weight: parseFloat(weight),
-            },
-          }),
-        });
-
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.detail || data.error || "Gagal melakukan analisis citra.");
-        }
-
-        setResult(data);
-        setActiveStep("gradcam");
-        setIsAnalyzing(false);
-
-        // Auto-save to history
-        const examData: Examination = {
-          id: "exam-" + Date.now(),
-          patientId: "#LN-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.floor(1000 + Math.random() * 9000),
-          patientName: patientName,
-          age: parseInt(age),
-          gender: gender,
-          height: parseFloat(height),
-          weight: parseFloat(weight),
-          date: new Date().toISOString(),
-          prediction: data.prediction,
-          confidence: data.confidence,
-          imageUrl: data.images?.original ? `data:image/png;base64,${data.images.original}` : (previewUrl || ""),
-          heatmapUrl: data.images?.gradcam ? `data:image/png;base64,${data.images.gradcam}` : "",
-          notes: data.explanation,
+      // Promisify FileReader agar error asinkronus dapat ditangkap oleh try/catch utama
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const res = (reader.result as string).split(",")[1];
+          resolve(res);
         };
+        reader.onerror = (err) => reject(err);
+      });
 
-        const existingHistoryJson = localStorage.getItem("lungai_history");
-        const existingHistory: Examination[] = existingHistoryJson ? JSON.parse(existingHistoryJson) : [];
-        const updatedHistory = [examData, ...existingHistory];
-        localStorage.setItem("lungai_history", JSON.stringify(updatedHistory));
+      const apiUrl = import.meta.env.VITE_API_URL || "";
+      const response = await fetch(`${apiUrl}/api/analyze-xray`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imageBase64: base64Data,
+          patientMetadata: {
+            name: patientName,
+            age: parseInt(age),
+            gender: gender,
+            height: parseFloat(height),
+            weight: parseFloat(weight),
+          },
+        }),
+      });
 
-        toast.success("Analisis Berhasil", {
-          description: "Hasil klasifikasi telah tersimpan ke histori.",
-        });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || data.error || "Gagal melakukan analisis citra.");
+      }
+
+      setResult(data);
+      setActiveStep("gradcam");
+      setIsAnalyzing(false);
+
+      // Auto-save to history
+      const examData: Examination = {
+        id: "exam-" + Date.now(),
+        patientId: "#LN-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.floor(1000 + Math.random() * 9000),
+        patientName: patientName,
+        age: parseInt(age),
+        gender: gender,
+        height: parseFloat(height),
+        weight: parseFloat(weight),
+        date: new Date().toISOString(),
+        prediction: data.prediction,
+        confidence: data.confidence,
+        imageUrl: data.images?.original ? `data:image/png;base64,${data.images.original}` : (previewUrl || ""),
+        heatmapUrl: data.images?.gradcam ? `data:image/png;base64,${data.images.gradcam}` : "",
+        notes: data.explanation,
       };
+
+      const existingHistoryJson = localStorage.getItem("lungai_history");
+      const existingHistory: Examination[] = existingHistoryJson ? JSON.parse(existingHistoryJson) : [];
+      const updatedHistory = [examData, ...existingHistory];
+      localStorage.setItem("lungai_history", JSON.stringify(updatedHistory));
+
+      toast.success("Analisis Berhasil", {
+        description: "Hasil klasifikasi telah tersimpan ke histori.",
+      });
     } catch (error: any) {
       console.error("Analysis error:", error);
       setIsAnalyzing(false);
