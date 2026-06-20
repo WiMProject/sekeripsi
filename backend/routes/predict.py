@@ -139,10 +139,14 @@ async def analyze_xray(payload: AnalyzeRequest):
             
             model = genai.GenerativeModel("gemini-2.5-flash")
             prompt = (
-                "Assess if this image is a medical human chest X-ray. "
-                "Respond with exactly one word: 'yes' if it is a chest X-ray, or 'no' if it is anything else "
-                "(for example, photos of people, animals, landscapes, text, charts, food, or other medical scans "
-                "like brain CT scan, ultrasound, dental X-ray, etc)."
+                "Analyze the provided image and determine if it is a valid medical human chest X-ray (rontgen dada).\n"
+                "Rules for classification:\n"
+                "1. It must be a black and white/grayscale medical chest X-ray showing the human ribcage, lungs, and clavicles.\n"
+                "2. If the image is a photo of a person, face, skin, clothes, selfie, animal, landscape, object, text, or food, respond with 'no'.\n"
+                "3. If it is any other type of scan (e.g. brain MRI/CT, ultrasound, dental X-ray, hand/foot X-ray), respond with 'no'.\n"
+                "4. If the image is a photo of a screen showing an X-ray, or contains room backgrounds, color, or human hands/bodies holding the scan, respond with 'no'. It must be the raw chest X-ray scan image.\n"
+                "5. If you are unsure or if the image is invalid/blank, respond with 'no'.\n\n"
+                "Respond with EXACTLY one word: 'yes' or 'no'."
             )
             response = model.generate_content([prompt, img_pil])
             validation_result = response.text.strip().lower()
