@@ -60,7 +60,7 @@ export const FloatingNav = ({
         )}
       >
         {logo && (
-          <div className="mr-4 pr-4 border-r border-white/10">
+          <div className="mr-3 md:mr-4 pr-3 md:pr-4 border-r border-white/10">
             {logo}
           </div>
         )}
@@ -71,7 +71,7 @@ export const FloatingNav = ({
               key={`link-${idx}`}
               to={navItem.link}
               className={cn(
-                "relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300",
+                "relative px-2.5 md:px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300",
                 isActive
                   ? "text-white"
                   : "text-slate-400 hover:text-white"
@@ -86,9 +86,9 @@ export const FloatingNav = ({
               )}
               <span className="relative z-10 flex items-center gap-2">
                 {navItem.icon && (
-                  <span className="block sm:hidden">{navItem.icon}</span>
+                  <span className="block md:hidden">{navItem.icon}</span>
                 )}
-                <span className="hidden sm:block">{navItem.name}</span>
+                <span className="hidden md:block">{navItem.name}</span>
               </span>
             </Link>
           );
@@ -96,7 +96,7 @@ export const FloatingNav = ({
         {ctaButton && (
           <Link
             to={ctaButton.link}
-            className="ml-3 px-5 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:scale-105"
+            className="ml-3 px-5 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:scale-105 hidden md:inline-block"
           >
             {ctaButton.label}
           </Link>
