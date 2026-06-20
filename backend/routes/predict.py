@@ -147,8 +147,13 @@ async def analyze_xray(payload: AnalyzeRequest):
             response = model.generate_content([prompt, img_pil])
             validation_result = response.text.strip().lower()
             
-            # Jika Gemini membalas "no"
-            if "no" in validation_result:
+            # Bersihkan tanda baca umum yang mungkin dikembalikan oleh LLM
+            validation_result = validation_result.replace(".", "").replace(",", "").strip()
+            
+            print(f"[Gemini Validation] Response: '{validation_result}'")
+            
+            # Validasi ketat: Hanya izinkan jika jawaban tepat mengandung "yes" dan TIDAK mengandung "no"
+            if "yes" not in validation_result or "no" in validation_result:
                 raise HTTPException(
                     status_code=400,
                     detail="Berkas yang Anda unggah terdeteksi bukan merupakan citra rontgen dada (X-Ray) manusia yang valid."
@@ -156,8 +161,17 @@ async def analyze_xray(payload: AnalyzeRequest):
         except HTTPException:
             raise
         except Exception as e:
-            # Jika API Gemini error/limit, abaikan validasi (fallback) agar sistem tetap bisa berfungsi dengan model lokal
-            print(f"Gemini image validation skipped due to error: {e}")
+            # Jika API Gemini error/limit, jangan dilewati secara diam-diam. Tampilkan error agar user tahu penyebabnya.
+            raise HTTPException(
+                status_code=400,
+                detail=f"Gagal melakukan validasi citra: {str(e)}"
+            )
+    else:
+        # Jika API Key Gemini tidak diatur di backend, beritahu pengguna secara jelas
+        raise HTTPException(
+            status_code=400,
+            detail="Gagal melakukan validasi: API Key Gemini belum dikonfigurasi di server backend. Silakan tambahkan secret GEMINI_API_KEY di Hugging Face Space."
+        )
 
     # Jalankan inference
     try:
