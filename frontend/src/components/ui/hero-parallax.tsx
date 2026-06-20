@@ -25,29 +25,32 @@ export const HeroParallax = ({
   });
 
   const springConfig = { stiffness: 80, damping: 25, mass: 1 };
+  
+  // Deteksi ukuran mobile secara dinamis untuk penyesuaian parameter animasi
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 1000]),
+    useTransform(scrollYProgress, [0, 1], [0, isMobile ? 400 : 1000]),
     springConfig
   );
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -1000]),
+    useTransform(scrollYProgress, [0, 1], [0, isMobile ? -400 : -1000]),
     springConfig
   );
   const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [15, 0]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 5 : 15, 0]),
     springConfig
   );
   const opacity = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [0.2, 1]),
+    useTransform(scrollYProgress, [0, 0.2], [0.3, 1]),
     springConfig
   );
   const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [20, 0]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 6 : 20, 0]),
     springConfig
   );
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [-700, 200]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? -250 : -700, isMobile ? 50 : 200]),
     springConfig
   );
 
@@ -65,7 +68,7 @@ export const HeroParallax = ({
           opacity,
         }}
       >
-        <motion.div className="flex flex-row-reverse space-x-reverse space-x-10 mb-10">
+        <motion.div className="flex flex-row-reverse space-x-reverse space-x-6 md:space-x-10 mb-6 md:mb-10">
           {firstRow.map((product) => (
             <ProductCard
               product={product}
@@ -74,7 +77,7 @@ export const HeroParallax = ({
             />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row space-x-10 mb-10">
+        <motion.div className="flex flex-row space-x-6 md:space-x-10 mb-6 md:mb-10">
           {secondRow.map((product) => (
             <ProductCard
               product={product}
@@ -83,7 +86,7 @@ export const HeroParallax = ({
             />
           ))}
         </motion.div>
-        <motion.div className="flex flex-row-reverse space-x-reverse space-x-10">
+        <motion.div className="flex flex-row-reverse space-x-reverse space-x-6 md:space-x-10">
           {thirdRow.map((product) => (
             <ProductCard
               product={product}
@@ -167,7 +170,7 @@ export const ProductCard = ({
         y: -20,
       }}
       key={product.title}
-      className="group/product h-72 w-[25rem] relative flex-shrink-0 transform-gpu"
+      className="group/product h-48 w-[16rem] md:h-72 md:w-[25rem] relative flex-shrink-0 transform-gpu"
     >
       <Link
         to={product.link}
@@ -184,7 +187,7 @@ export const ProductCard = ({
               alt={product.title}
             />
           ) : (
-            <div className="flex flex-col items-center justify-between h-full w-full p-8 text-center bg-slate-900/40">
+            <div className="flex flex-col items-center justify-between h-full w-full p-4 md:p-8 text-center bg-slate-900/40">
               <div className="flex-1 flex items-center justify-center">
                 {product.icon && (
                   <div className="text-white group-hover/product:scale-110 transition-transform duration-500">
@@ -192,11 +195,11 @@ export const ProductCard = ({
                   </div>
                 )}
               </div>
-              <div className="w-full mt-4">
-                <h3 className="text-white font-bold text-lg tracking-tight mb-2">
+              <div className="w-full mt-2 md:mt-4">
+                <h3 className="text-white font-bold text-sm md:text-lg tracking-tight mb-1 md:mb-2">
                   {product.title}
                 </h3>
-                <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider opacity-60 group-hover/product:opacity-100 transition-opacity duration-300">
+                <p className="text-[10px] md:text-xs text-blue-400 font-semibold uppercase tracking-wider opacity-60 group-hover/product:opacity-100 transition-opacity duration-300">
                   Lihat Detail →
                 </p>
               </div>
