@@ -38,7 +38,7 @@ export const HeroParallax = ({
     springConfig
   );
   const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 5 : 15, 0]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 0 : 15, 0]),
     springConfig
   );
   const opacity = useSpring(
@@ -46,11 +46,11 @@ export const HeroParallax = ({
     springConfig
   );
   const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 6 : 20, 0]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? 0 : 20, 0]),
     springConfig
   );
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [isMobile ? -450 : -680, isMobile ? 50 : 200]),
+    useTransform(scrollYProgress, [0, 0.2], [isMobile ? -120 : -680, isMobile ? 20 : 200]),
     springConfig
   );
 
